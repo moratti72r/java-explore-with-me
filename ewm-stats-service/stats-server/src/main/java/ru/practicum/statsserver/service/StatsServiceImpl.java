@@ -19,7 +19,7 @@ public class StatsServiceImpl implements StatsService {
     private final StatsServerRepository statsServerRepository;
 
     @Override
-    public void addHit (EndpointHitDto endpointHitDto) {
+    public void addHit(EndpointHitDto endpointHitDto) {
         EndpointHit endpointHit = EndpointHit
                 .builder()
                 .app(endpointHitDto.getApp())
@@ -32,7 +32,7 @@ public class StatsServiceImpl implements StatsService {
     }
 
     @Override
-    public List<ViewStatsDto> findHits (String start, String end, List<String> uris, Boolean unique) {
+    public List<ViewStatsDto> findHits(String start, String end, List<String> uris, Boolean unique) {
         String decoderStart = URLDecoder.decode(start, StandardCharsets.UTF_8);
         String decoderEnd = URLDecoder.decode(end, StandardCharsets.UTF_8);
 
@@ -40,15 +40,15 @@ public class StatsServiceImpl implements StatsService {
         LocalDateTime endDate = LocalDateTime.parse(decoderEnd);
 
         if (unique) {
-            if (uris!=null && !uris.isEmpty()){
+            if (uris != null && !uris.isEmpty()) {
                 return statsServerRepository.findAllViewStatsWithUrisAndUniqueIp(startDate, endDate, uris);
-            }else {
+            } else {
                 return statsServerRepository.findAllViewStatsWithoutUrisAndUniqueIp(startDate, endDate);
             }
-        }else {
-            if (uris!=null && !uris.isEmpty()){
+        } else {
+            if (uris != null && !uris.isEmpty()) {
                 return statsServerRepository.findAllViewStatsWithUris(startDate, endDate, uris);
-            }else {
+            } else {
                 return statsServerRepository.findAllViewStatsWithoutUris(startDate, endDate);
             }
         }
