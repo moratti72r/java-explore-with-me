@@ -26,6 +26,10 @@ public class Client extends BaseClient {
         );
     }
 
+    private static String toPlainString(List<String> uris) {
+        return String.join(",", uris);
+    }
+
     public void addPost(EndpointHitDto hitDto) {
         post("/hit", hitDto);
     }
@@ -38,9 +42,5 @@ public class Client extends BaseClient {
                 "unique", unique
         );
         return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
-    }
-
-    private static String toPlainString(List<String> uris) {
-        return String.join(",", uris);
     }
 }

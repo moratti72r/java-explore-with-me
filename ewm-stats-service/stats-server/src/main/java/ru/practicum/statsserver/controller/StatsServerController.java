@@ -32,10 +32,10 @@ public class StatsServerController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<List<ViewStatsDto>> getHits (@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") String start,
-                                                 @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  String end,
-                                                 @RequestParam(name = "uris", required = false) List<String> uris,
-                                                 @RequestParam(name = "unique", defaultValue = "false") Boolean unique) {
+    public ResponseEntity<List<ViewStatsDto>> getHits(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") String start,
+                                                      @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") String end,
+                                                      @RequestParam(name = "uris", required = false) List<String> uris,
+                                                      @RequestParam(name = "unique", defaultValue = "false") Boolean unique) {
         return ResponseEntity.ok(statsService.findHits(start, end, uris, unique));
     }
 }
