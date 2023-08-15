@@ -1,16 +1,17 @@
 package ru.practicum.statsdto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data
-
 public class EndpointHitDto {
 
-    private long id;
+    private Long id;
     @NotNull
     @Size(max = 32)
     private String app;
@@ -21,5 +22,6 @@ public class EndpointHitDto {
     @Size(max = 16)
     private String ip;
     @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 }

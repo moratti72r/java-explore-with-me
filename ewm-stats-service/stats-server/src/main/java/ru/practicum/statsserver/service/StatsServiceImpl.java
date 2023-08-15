@@ -1,6 +1,7 @@
 package ru.practicum.statsserver.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.statsdto.EndpointHitDto;
 import ru.practicum.statsdto.ViewStatsDto;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class StatsServiceImpl implements StatsService {
 
@@ -28,7 +30,10 @@ public class StatsServiceImpl implements StatsService {
                 .timestamp(endpointHitDto.getTimestamp())
                 .build();
 
-        statsServerRepository.save(endpointHit);
+        EndpointHit result = statsServerRepository.save(endpointHit);
+        log.info("Добавлена информация с id {}, что в сервис {} на uri {} " +
+                        "был отправлен запрос пользователем с ip - {}, время отправления - {}",
+                result.getId(), result.getApp(), result.getUri(), result.getIp(), result.getTimestamp());
     }
 
     @Override
@@ -41,14 +46,18 @@ public class StatsServiceImpl implements StatsService {
 
         if (unique) {
             if (uris != null && !uris.isEmpty()) {
+                log.info("Получена статистика по уникальным посещениям по списку {}", uris);
                 return statsServerRepository.findAllViewStatsWithUrisAndUniqueIp(startDate, endDate, uris);
             } else {
+                log.info("Получена полная статистика по уникальным посещениям");
                 return statsServerRepository.findAllViewStatsWithoutUrisAndUniqueIp(startDate, endDate);
             }
         } else {
             if (uris != null && !uris.isEmpty()) {
+                log.info("Получена статистика по всем посещениям по списку {}", uris);
                 return statsServerRepository.findAllViewStatsWithUris(startDate, endDate, uris);
             } else {
+                log.info("Получена полная статистика по всем посещениям");
                 return statsServerRepository.findAllViewStatsWithoutUris(startDate, endDate);
             }
         }
