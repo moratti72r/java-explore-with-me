@@ -31,8 +31,8 @@ public class StatsServiceImpl implements StatsService {
                 .build();
 
         EndpointHit result = statsServerRepository.save(endpointHit);
-        log.info("Добавлена информация с id {}, что в сервис {} на uri {} " +
-                        "был отправлен запрос пользователем с ip - {}, время отправления - {}",
+        log.info("Добавлена информация с id-{}, что в сервис-{} на uri-{} " +
+                        "был отправлен запрос пользователем с ip-{}, время отправления-{}",
                 result.getId(), result.getApp(), result.getUri(), result.getIp(), result.getTimestamp());
     }
 

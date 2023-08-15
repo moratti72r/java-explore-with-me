@@ -2,12 +2,14 @@ package ru.practicum.statsdto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
 public class EndpointHitDto {
 
     private Long id;

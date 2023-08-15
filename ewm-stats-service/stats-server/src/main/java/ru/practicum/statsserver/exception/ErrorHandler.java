@@ -11,7 +11,7 @@ import javax.validation.ValidationException;
 import java.util.Map;
 
 @Slf4j
-@ControllerAdvice("ru.practicum.statsserver")
+@ControllerAdvice("ru.practicum.stats-server")
 public class ErrorHandler {
 
     @ExceptionHandler
