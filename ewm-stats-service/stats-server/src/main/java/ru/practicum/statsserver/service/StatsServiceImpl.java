@@ -37,28 +37,23 @@ public class StatsServiceImpl implements StatsService {
     }
 
     @Override
-    public List<ViewStatsDto> findHits(String start, String end, List<String> uris, Boolean unique) {
-        String decoderStart = URLDecoder.decode(start, StandardCharsets.UTF_8);
-        String decoderEnd = URLDecoder.decode(end, StandardCharsets.UTF_8);
-
-        LocalDateTime startDate = LocalDateTime.parse(decoderStart);
-        LocalDateTime endDate = LocalDateTime.parse(decoderEnd);
+    public List<ViewStatsDto> findHits(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
 
         if (unique) {
             if (uris != null && !uris.isEmpty()) {
                 log.info("Получена статистика по уникальным посещениям по списку {}", uris);
-                return statsServerRepository.findAllViewStatsWithUrisAndUniqueIp(startDate, endDate, uris);
+                return statsServerRepository.findAllViewStatsWithUrisAndUniqueIp(start, end, uris);
             } else {
                 log.info("Получена полная статистика по уникальным посещениям");
-                return statsServerRepository.findAllViewStatsWithoutUrisAndUniqueIp(startDate, endDate);
+                return statsServerRepository.findAllViewStatsWithoutUrisAndUniqueIp(start, end);
             }
         } else {
             if (uris != null && !uris.isEmpty()) {
                 log.info("Получена статистика по всем посещениям по списку {}", uris);
-                return statsServerRepository.findAllViewStatsWithUris(startDate, endDate, uris);
+                return statsServerRepository.findAllViewStatsWithUris(start, end, uris);
             } else {
                 log.info("Получена полная статистика по всем посещениям");
-                return statsServerRepository.findAllViewStatsWithoutUris(startDate, endDate);
+                return statsServerRepository.findAllViewStatsWithoutUris(start, end);
             }
         }
     }

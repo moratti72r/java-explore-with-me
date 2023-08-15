@@ -15,6 +15,7 @@ import ru.practicum.statsdto.ViewStatsDto;
 import ru.practicum.statsserver.service.StatsService;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -34,8 +35,8 @@ public class StatsServerController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<List<ViewStatsDto>> getHits(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") String start,
-                                                      @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") String end,
+    public ResponseEntity<List<ViewStatsDto>> getHits(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+                                                      @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                                       @RequestParam(name = "uris", required = false) List<String> uris,
                                                       @RequestParam(name = "unique", defaultValue = "false") Boolean unique) {
         log.info("Получен GET запрос /stats?start={}&end={}&uris={}&unique={}", start, end, uris, unique);
