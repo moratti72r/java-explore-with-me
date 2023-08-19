@@ -10,14 +10,17 @@ import ru.practicum.statsdto.EndpointHitDto;
 import ru.practicum.statsdto.ViewStatsDto;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class Client extends BaseClient {
 
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     @Autowired
-    public Client(@Value("http://stats-server:9090") String serverUrl, RestTemplateBuilder builder) {
+    public Client(@Value("${ewm-stats-service.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
@@ -36,8 +39,8 @@ public class Client extends BaseClient {
 
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
         Map<String, Object> parameters = Map.of(
-                "start", start,
-                "end", end,
+                "start", start.format(dateTimeFormatter),
+                "end", end.format(dateTimeFormatter),
                 "uris", toPlainString(uris),
                 "unique", unique
         );

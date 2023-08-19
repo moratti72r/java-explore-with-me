@@ -3,8 +3,9 @@ package ru.practicum.statsdto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -12,14 +13,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class EndpointHitDto {
 
-    private Long id;
-    @NotNull
+    @NotBlank
     @Size(max = 32)
     private String app;
-    @NotNull
+    @NotBlank
     @Size(max = 128)
     private String uri;
-    @NotNull
+    @NotBlank
     @Size(max = 16)
     private String ip;
     @NotNull
