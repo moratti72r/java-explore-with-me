@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class Client extends BaseClient {
+public class StatClient extends BaseClient {
 
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
-    public Client(@Value("${ewm-stats-service.url}") String serverUrl, RestTemplateBuilder builder) {
+    public StatClient(@Value("http://stats-server:9090") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
