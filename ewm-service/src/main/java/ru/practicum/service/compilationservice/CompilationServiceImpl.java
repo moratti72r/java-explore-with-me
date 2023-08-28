@@ -7,13 +7,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.compilation.CompilationDto;
 import ru.practicum.dto.compilation.NewCompilationDto;
+import ru.practicum.dto.event.EventShortDto;
 import ru.practicum.dto.mapper.CompilationMapper;
+import ru.practicum.dto.mapper.EventMapper;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.NotMeetConditionException;
 import ru.practicum.model.Compilation;
 import ru.practicum.model.Event;
 import ru.practicum.repository.CompilationRepository;
 import ru.practicum.repository.EventRepository;
+import ru.practicum.service.statservice.StatService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,22 +30,30 @@ public class CompilationServiceImpl implements CompilationService {
 
     private final EventRepository eventRepository;
 
+    private final StatService statService;
+
     @Override
     public CompilationDto createCompilation(NewCompilationDto compilationDto) {
-        Set<Event> eventSet;
+        Set<Event> eventSet = new HashSet<>();
+
         if (compilationDto.getEvents() != null) {
             eventSet = getEventsFromIds(compilationDto.getEvents());
-        } else throw new NotMeetConditionException("Error: Список идентификаторов событий не должен быть null");
+        }
 
-        Compilation compilation = compilationRepository.save(Compilation.builder()
+        Compilation newCompilation = Compilation.builder()
                 .events(eventSet)
-                .pinned(compilationDto.getPinned())
+                .pinned(compilationDto.isPinned())
                 .title(compilationDto.getTitle())
-                .build());
+                .build();
+
+        Compilation compilation = compilationRepository.save(newCompilation);
 
         log.info("Подборка с id={} создана", compilation.getId());
 
-        return CompilationMapper.toCompilationDto(compilation);
+        CompilationDto result = CompilationMapper.toCompilationDto(compilation);
+        result.setEvents(getEventShortDtoSet(eventSet));
+
+        return result;
     }
 
     @Override
@@ -64,33 +75,35 @@ public class CompilationServiceImpl implements CompilationService {
             compilation.setEvents(eventSet);
         }
 
-        if (compilationDto.getPinned() != null) {
-            compilation.setPinned(compilationDto.getPinned());
-        }
+        compilation.setPinned(compilationDto.isPinned());
+
         if (compilationDto.getTitle() != null) {
             compilation.setTitle(compilationDto.getTitle());
         }
 
         compilationRepository.save(compilation);
 
-        log.info("Плдборка с id={} обновлена", idCompilation);
-        return CompilationMapper.toCompilationDto(compilation);
+        CompilationDto result = CompilationMapper.toCompilationDto(compilation);
+        result.setEvents(getEventShortDtoSet(compilation.getEvents()));
+
+        log.info("Подборка с id={} обновлена", idCompilation);
+        return result;
     }
 
     @Override
     public List<CompilationDto> getComplicationByPinned(Boolean pinned, int from, int size) {
         PageRequest pageRequest = PageRequest.of(from / size, size, Sort.by("id").ascending());
-        List<CompilationDto> compilationDtoList;
-        if (pinned != null) {
-            List<Compilation> compilations = compilationRepository.findAllByPinned(pinned, pageRequest);
-            compilationDtoList = compilations.stream().map(CompilationMapper::toCompilationDto).collect(Collectors.toList());
-        } else {
-            List<Compilation> compilations = (List<Compilation>) compilationRepository.findAll(pageRequest);
-            compilationDtoList = compilations.stream().map(CompilationMapper::toCompilationDto).collect(Collectors.toList());
+
+        List<Compilation> compilations = compilationRepository.findAllByPinned(pinned, pageRequest);
+        Map<Long, CompilationDto> compilationDtoMap = compilations.stream()
+                .map(CompilationMapper::toCompilationDto).collect(Collectors.toMap(CompilationDto::getId, compilationDto -> compilationDto));
+
+        for (Compilation compilation : compilations) {
+            compilationDtoMap.get(compilation.getId()).setEvents(getEventShortDtoSet(compilation.getEvents()));
         }
 
         log.info("Получен список подборок");
-        return compilationDtoList;
+        return new ArrayList<>(compilationDtoMap.values());
     }
 
     @Override
@@ -100,8 +113,11 @@ public class CompilationServiceImpl implements CompilationService {
         }
         Compilation compilation = compilationRepository.findById(idCompilation).get();
 
+        CompilationDto result = CompilationMapper.toCompilationDto(compilation);
+        result.setEvents(getEventShortDtoSet(compilation.getEvents()));
+
         log.info("Получена подборка с id={}", idCompilation);
-        return CompilationMapper.toCompilationDto(compilation);
+        return result;
     }
 
     private Set<Event> getEventsFromIds(Set<Long> ids) {
@@ -116,5 +132,26 @@ public class CompilationServiceImpl implements CompilationService {
             }
         }
         return result;
+    }
+
+    private Set<EventShortDto> getEventShortDtoSet(Set<Event> eventSet) {
+        Set<EventShortDto> result;
+        List<Event> events = new ArrayList<>(eventSet);
+        if (!events.isEmpty()) {
+
+            Map<Long, Long> confirmedRequest = statService.getConfirmedRequests(events);
+
+            Map<Long, Long> views = statService.getViews(events);
+
+            result = events.stream()
+                    .map(EventMapper::toEventShortDto)
+                    .collect(Collectors.toSet());
+            result.forEach(eventShortDto -> {
+                eventShortDto.setConfirmedRequests(confirmedRequest.getOrDefault(eventShortDto.getId(), 0L));
+                eventShortDto.setViews(views.getOrDefault(eventShortDto.getId(), 0L));
+            });
+
+            return result;
+        } else return Set.of();
     }
 }

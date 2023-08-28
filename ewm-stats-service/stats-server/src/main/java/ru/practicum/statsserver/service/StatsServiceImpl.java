@@ -22,12 +22,14 @@ public class StatsServiceImpl implements StatsService {
     private final StatsServerRepository statsServerRepository;
 
     @Override
-    public void addHit(EndpointHitDto endpointHitDto) {
+    public EndpointHitDto addHit(EndpointHitDto endpointHitDto) {
         EndpointHit endpointHit = EndpointHitMapper.toEndpointHit(endpointHitDto);
         EndpointHit result = statsServerRepository.save(endpointHit);
         log.info("Добавлена информация с id-{}, что в сервис-{} на uri-{} " +
                         "был отправлен запрос пользователем с ip-{}, время отправления-{}",
                 result.getId(), result.getApp(), result.getUri(), result.getIp(), result.getTimestamp());
+
+        return EndpointHitMapper.toEndpointHitDto(result);
     }
 
     @Override
