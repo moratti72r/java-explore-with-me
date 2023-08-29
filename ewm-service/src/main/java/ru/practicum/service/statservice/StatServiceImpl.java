@@ -30,11 +30,8 @@ public class StatServiceImpl implements StatService {
 
     private final StatClient statClient;
 
-    @Value("ewm-main-service")
+    @Value("${main_app}")
     private String app;
-    //не могу сделать так чтобы считывала с application
-    //Прописывал @PropertySource("classpath:application.properties") в главном классе
-    //при этом у меня запускается, а на тестах git валится
 
     @Override
     public Map<Long, Long> getConfirmedRequests(List<Event> events) {

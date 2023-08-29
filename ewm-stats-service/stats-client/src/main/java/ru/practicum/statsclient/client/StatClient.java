@@ -22,10 +22,7 @@ public class StatClient extends BaseClient {
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
-    public StatClient(@Value("http://stats-server:9090") String serverUrl, RestTemplateBuilder builder) {
-        //не могу сделать так чтобы считывала с application
-        //Прописывал @PropertySource("classpath:application.properties") в главном классе
-        //при этом у меня запускается, а на тестах git валится
+    public StatClient(@Value("${stats-service.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
