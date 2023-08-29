@@ -387,7 +387,7 @@ public class EventServiceImpl implements EventService {
         }
 
         PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by(sort).descending());
-        List<Event> events = eventRepository.findAllByParameters(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, pageRequest);
+        List<Event> events = eventRepository.findAllByParametersForUser(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, State.PUBLISHED, pageRequest);
 
         List<EventShortDto> eventDtoList = new ArrayList<>();
         if (!events.isEmpty()) {
