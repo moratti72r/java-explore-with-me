@@ -27,7 +27,6 @@ public class StatsServerController {
     @Validated
     public ResponseEntity<EndpointHitDto> createHit(@Valid @RequestBody EndpointHitDto endpointHitDto) {
         log.info("Получен POST запрос /hit");
-        statsService.addHit(endpointHitDto);
         return new ResponseEntity<>(statsService.addHit(endpointHitDto), HttpStatus.CREATED);
     }
 
