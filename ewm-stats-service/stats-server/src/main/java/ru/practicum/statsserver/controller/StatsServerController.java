@@ -30,6 +30,7 @@ public class StatsServerController {
     }
 
     @GetMapping("/stats")
+    @Validated
     public ResponseEntity<List<ViewStatsDto>> getHits(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
                                                       @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                                       @RequestParam(name = "uris", required = false) List<String> uris,
