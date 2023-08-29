@@ -15,7 +15,7 @@ public class EventMapper {
                 .eventDate(eventDto.getEventDate())
                 .paid(eventDto.isPaid())
                 .participantLimit(eventDto.getParticipantLimit())
-                .requestModeration(eventDto.isRequestModeration())
+                .requestModeration(eventDto.getRequestModeration())
                 .title(eventDto.getTitle())
                 .build();
     }

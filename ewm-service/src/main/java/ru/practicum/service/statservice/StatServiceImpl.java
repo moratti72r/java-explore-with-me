@@ -30,7 +30,7 @@ public class StatServiceImpl implements StatService {
 
     private final StatClient statClient;
 
-    @Value("ewm-main-service")
+    @Value("${main_app}")
     private String app;
 
     @Override

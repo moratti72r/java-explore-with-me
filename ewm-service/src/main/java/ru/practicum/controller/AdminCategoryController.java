@@ -13,16 +13,17 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@Validated
 @Slf4j
 @RequestMapping(path = "/admin/categories")
+@Validated
 public class AdminCategoryController {
 
     private final CategoryService categoryService;
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto create(@RequestBody @Valid NewCategoryDto categoryDto) {
+    @Validated
+    public CategoryDto create(@Valid @RequestBody NewCategoryDto categoryDto) {
         log.info("Получен POST запрос /admin/categories");
         return categoryService.create(categoryDto);
     }
@@ -35,7 +36,8 @@ public class AdminCategoryController {
     }
 
     @PatchMapping("/{id}")
-    public CategoryDto patch(@PathVariable("id") long id, @RequestBody @Valid NewCategoryDto categoryDto) {
+    @Validated
+    public CategoryDto patch(@PathVariable("id") long id, @Valid @RequestBody NewCategoryDto categoryDto) {
         log.info("Получен PATCH запрос /admin/categories/{}", id);
         return categoryService.upDate(id, categoryDto);
     }

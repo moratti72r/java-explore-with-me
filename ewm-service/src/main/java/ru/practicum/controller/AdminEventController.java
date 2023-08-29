@@ -10,14 +10,15 @@ import ru.practicum.dto.event.UpdateEventAdminRequest;
 import ru.practicum.model.State;
 import ru.practicum.service.eventservice.EventService;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Validated
 @Slf4j
 @RequestMapping(path = "/admin")
+@Validated
 public class AdminEventController {
 
     private final EventService eventService;
@@ -38,8 +39,9 @@ public class AdminEventController {
     }
 
     @PatchMapping("/events/{eventId}")
+    @Validated
     public EventFullDto updateEvent(@PathVariable long eventId,
-                                    @RequestBody UpdateEventAdminRequest updateEvent) {
+                                    @Valid @RequestBody UpdateEventAdminRequest updateEvent) {
         log.info("Получен PATCH запрос /admin/events/{}", eventId);
         return eventService.updateEventByAdmin(eventId, updateEvent);
     }

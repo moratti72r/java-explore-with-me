@@ -16,15 +16,16 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@Validated
 @RequestMapping("/admin/users")
+@Validated
 public class AdminUserController {
 
     private final UserService userService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto create(@RequestBody @Valid UserDto userDto) {
+    @Validated
+    public UserDto create(@Valid @RequestBody UserDto userDto) {
         log.info("Получен POST запрос /admin/users");
         return userService.create(userDto);
     }

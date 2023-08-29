@@ -370,11 +370,14 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventShortDto> getEventsByParameterForUser(String text, List<Long> categories, Boolean paid,
                                                            LocalDateTime rangeStart, LocalDateTime rangeEnd,
-                                                           Boolean onlyAvailable, String sort, Integer from,
-                                                           Integer size, HttpServletRequest request) {
+                                                           Boolean onlyAvailable, String sort, int from,
+                                                           int size, HttpServletRequest request) {
 
         if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
             throw new MethodArgumentNotMeetLogicAppException("Начало события не может быть позже конца события");
+        }
+        if (rangeStart == null && rangeEnd == null) {
+            rangeStart = LocalDateTime.now();
         }
 
         if (sort != null && sort.equals("EVENT_DATE")) {

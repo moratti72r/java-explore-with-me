@@ -29,10 +29,9 @@ public interface EventService {
     EventFullDto updateEventByAdmin(long eventId, UpdateEventAdminRequest event);
 
     List<EventShortDto> getEventsByParameterForUser(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
-                                                    LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, Integer from,
-                                                    Integer size, HttpServletRequest request);
+                                                    LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, int from,
+                                                    int size, HttpServletRequest request);
 
     EventFullDto getEventByIdForUser(long id, HttpServletRequest request);
 
-    //добавить методы для запросов
 }

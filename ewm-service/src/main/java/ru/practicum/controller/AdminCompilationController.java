@@ -14,9 +14,9 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@Validated
 @Slf4j
 @RequestMapping(path = "/admin/compilations")
+@Validated
 public class AdminCompilationController {
 
     private final CompilationService compilationService;
@@ -24,7 +24,7 @@ public class AdminCompilationController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Validated(ValidationMarker.Create.class)
-    public CompilationDto createCompilation(@RequestBody @Valid NewCompilationDto compilationDto) {
+    public CompilationDto createCompilation(@Valid @RequestBody NewCompilationDto compilationDto) {
         log.info("Получен POST запрос /admin/compilations");
         return compilationService.createCompilation(compilationDto);
     }
@@ -38,8 +38,9 @@ public class AdminCompilationController {
 
     @PatchMapping("/{compId}")
     @ResponseStatus(HttpStatus.OK)
+    @Validated
     public CompilationDto updateCompilation(@PathVariable long compId,
-                                            @RequestBody @Valid NewCompilationDto compilationDto) {
+                                            @Valid @RequestBody NewCompilationDto compilationDto) {
         log.info("Получен PATCH запрос /admin/compilations/{}", compId);
         return compilationService.upDateCompilation(compId, compilationDto);
     }

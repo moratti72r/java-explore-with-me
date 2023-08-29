@@ -20,17 +20,18 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Validated
 @Slf4j
 @RequestMapping(path = "/users")
+@Validated
 public class PrivateEventController {
 
     private final EventService eventService;
 
     @PostMapping("/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
+    @Validated
     public EventFullDto createEvent(@PathVariable long userId,
-                                    @RequestBody @Valid NewEventDto eventDto) {
+                                    @Valid @RequestBody NewEventDto eventDto) {
         log.info("Получен POST запрос /users/{}/events", userId);
         return eventService.createEvent(userId, eventDto);
     }
@@ -54,9 +55,10 @@ public class PrivateEventController {
 
     @PatchMapping("/{userId}/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
+    @Validated
     public EventFullDto updateEvent(@PathVariable long userId,
                                     @PathVariable long eventId,
-                                    @RequestBody @Valid UpdateEventUserRequest updateEvent) {
+                                    @Valid @RequestBody UpdateEventUserRequest updateEvent) {
         log.info("Получен PATCH запрос /users/{}/events/{}", userId, eventId);
         return eventService.upDateEventByInitiator(userId, eventId, updateEvent);
     }
