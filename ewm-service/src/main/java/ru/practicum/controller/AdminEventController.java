@@ -31,9 +31,9 @@ public class AdminEventController {
                                           @RequestParam(name = "states", required = false) List<State> states,
                                           @RequestParam(name = "categories", required = false) List<Long> categories,
                                           @RequestParam(name = "rangeStart", required = false)
-                                          @DateTimeFormat(pattern = DateTimePattern.pattern) LocalDateTime rangeStart,
+                                          @DateTimeFormat(pattern = DateTimePattern.PATTERN) LocalDateTime rangeStart,
                                           @RequestParam(name = "rangeEnd", required = false)
-                                          @DateTimeFormat(pattern = DateTimePattern.pattern) LocalDateTime rangeEnd,
+                                          @DateTimeFormat(pattern = DateTimePattern.PATTERN) LocalDateTime rangeEnd,
                                           @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
                                           @RequestParam(name = "size", defaultValue = "10") @Positive int size) {
         log.info("Получен GET запрос /admin/events?users={}&states={}&categories={}&rangeStart={}&rangeEnd={}&from={}&size={}",

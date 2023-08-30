@@ -27,7 +27,7 @@ public class UpdateEventRequest {
     protected String description;
 
     @TwoHoursAhead
-    @JsonFormat(pattern = DateTimePattern.pattern)
+    @JsonFormat(pattern = DateTimePattern.PATTERN)
     protected LocalDateTime eventDate;
 
     @Valid

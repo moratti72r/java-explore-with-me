@@ -8,6 +8,6 @@ public class TwoHoursAheadValidator implements ConstraintValidator<TwoHoursAhead
 
     @Override
     public boolean isValid(LocalDateTime target, ConstraintValidatorContext context) {
-        return target == null || target.isAfter(LocalDateTime.now());
+        return target == null || target.isAfter(LocalDateTime.now().plusHours(2));
     }
 }

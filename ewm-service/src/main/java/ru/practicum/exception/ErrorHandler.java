@@ -20,7 +20,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DateTimePattern.pattern);
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DateTimePattern.PATTERN);
 
     @ExceptionHandler({DataIntegrityViolationException.class, NotMeetLogicAppException.class})
     @ResponseStatus(HttpStatus.CONFLICT)

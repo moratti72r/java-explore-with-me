@@ -48,10 +48,6 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventFullDto createEvent(long userId, NewEventDto eventDto) {
 
-//        if (eventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2)) || eventDto.getEventDate().isBefore(LocalDateTime.now())) {
-//            throw new NotMeetConditionException("Field: eventDate. Error: должно содержать дату, которая еще не наступила." +
-//                    " Value: " + eventDto.getEventDate());
-//        }
         Category category = categoryRepository.findById(eventDto.getCategory())
                 .orElseThrow(() -> new NotMeetConditionException("Должен содержать категорию которая существует. " +
                         "Value: " + eventDto.getCategory()));
@@ -80,24 +76,7 @@ public class EventServiceImpl implements EventService {
 
         List<Event> events = eventRepository.findAllByInitiatorId(userId, pageRequest);
 
-        List<EventFullDto> result;
-
-        if (!events.isEmpty()) {
-
-            Map<Long, Long> confirmedRequest = statService.getConfirmedRequests(events);
-
-            Map<Long, Long> views = statService.getViews(events);
-
-            result = events.stream()
-                    .map(EventMapper::toEventFullDto)
-                    .collect(Collectors.toList());
-            result.forEach(eventFullDto -> {
-                eventFullDto.setConfirmedRequests(confirmedRequest.getOrDefault(eventFullDto.getId(), 0L));
-                eventFullDto.setViews(views.getOrDefault(eventFullDto.getId(), 0L));
-            });
-
-            return result;
-        } else result = List.of();
+        List<EventFullDto> result = getEventFullDtoList(events);
 
         log.info("Получен список событий созданных пользователем с id={}", userId);
         return result;
@@ -230,25 +209,7 @@ public class EventServiceImpl implements EventService {
         List<Event> events = eventRepository.findAllByParameters(users, states,
                 categories, rangeStart, rangeEnd, pageRequest);
 
-        List<EventFullDto> result;
-
-        if (!events.isEmpty()) {
-
-            Map<Long, Long> confirmedRequest = statService.getConfirmedRequests(events);
-
-            Map<Long, Long> views = statService.getViews(events);
-
-            result = events
-                    .stream()
-                    .map(EventMapper::toEventFullDto)
-                    .collect(Collectors.toList());
-            result.forEach(eventFullDto -> {
-                eventFullDto.setConfirmedRequests(confirmedRequest.getOrDefault(eventFullDto.getId(), 0L));
-                eventFullDto.setViews(views.getOrDefault(eventFullDto.getId(), 0L));
-            });
-
-            return result;
-        } else result = List.of();
+        List<EventFullDto> result = getEventFullDtoList(events);
 
         log.info("Получен список событий по параметрам");
         return result;
@@ -351,6 +312,25 @@ public class EventServiceImpl implements EventService {
         return result;
     }
 
+    private List<EventFullDto> getEventFullDtoList(List<Event> events) {
+        if (!events.isEmpty()) {
+
+            Map<Long, Long> confirmedRequest = statService.getConfirmedRequests(events);
+
+            Map<Long, Long> views = statService.getViews(events);
+
+            List<EventFullDto> result = events
+                    .stream()
+                    .map(EventMapper::toEventFullDto)
+                    .collect(Collectors.toList());
+            result.forEach(eventFullDto -> {
+                eventFullDto.setConfirmedRequests(confirmedRequest.getOrDefault(eventFullDto.getId(), 0L));
+                eventFullDto.setViews(views.getOrDefault(eventFullDto.getId(), 0L));
+            });
+            return result;
+        } else return List.of();
+    }
+
     private void updateEvent(Event event, UpdateEventRequest updateEvent) {
 
         if (updateEvent.getCategory() != null) {
@@ -376,10 +356,6 @@ public class EventServiceImpl implements EventService {
             event.setDescription(updateEvent.getDescription());
         }
         if (updateEvent.getEventDate() != null) {
-//            if (updateEvent.getEventDate().isBefore(LocalDateTime.now().plusHours(2)) || updateEvent.getEventDate().isBefore(LocalDateTime.now())) {
-//                throw new MethodArgumentNotMeetLogicAppException("Field: eventDate. Error: должно содержать дату, которая еще не наступила." +
-//                        " Value: " + updateEvent.getEventDate());
-//            }
             event.setEventDate(updateEvent.getEventDate());
         }
         if (updateEvent.getPaid() != null) {

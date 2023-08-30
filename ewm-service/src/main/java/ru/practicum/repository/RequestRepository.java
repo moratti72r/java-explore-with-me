@@ -7,6 +7,7 @@ import ru.practicum.model.Status;
 import ru.practicum.service.statservice.ConfirmedRequests;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface RequestRepository extends JpaRepository<ParticipationRequest, Long> {
@@ -20,7 +21,7 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest, L
 
     List<ParticipationRequest> findAllByEventId(long eventId);
 
-    boolean existsByIdAndRequesterId(long requestId, long userId);
+    Optional<ParticipationRequest> findByIdAndRequesterId(long requestId, long userId);
 
     long countAllByEventIdAndStatus(long eventId, Status status);
 

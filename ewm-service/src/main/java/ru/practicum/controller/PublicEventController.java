@@ -30,9 +30,9 @@ public class PublicEventController {
                                          @RequestParam(name = "categories", required = false) List<Long> categories,
                                          @RequestParam(name = "paid", required = false) Boolean paid,
                                          @RequestParam(name = "rangeStart", required = false)
-                                         @DateTimeFormat(pattern = DateTimePattern.pattern) LocalDateTime rangeStart,
+                                         @DateTimeFormat(pattern = DateTimePattern.PATTERN) LocalDateTime rangeStart,
                                          @RequestParam(name = "rangeEnd", required = false)
-                                         @DateTimeFormat(pattern = DateTimePattern.pattern) LocalDateTime rangeEnd,
+                                         @DateTimeFormat(pattern = DateTimePattern.PATTERN) LocalDateTime rangeEnd,
                                          @RequestParam(name = "onlyAvailable", defaultValue = "false") Boolean onlyAvailable,
                                          @RequestParam(name = "sort", required = false) String sort,
                                          @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,

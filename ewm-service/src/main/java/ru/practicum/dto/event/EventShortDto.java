@@ -20,7 +20,7 @@ public class EventShortDto {
     private String annotation;
     private CategoryDto category;
     private Long confirmedRequests;
-    @JsonFormat(pattern = DateTimePattern.pattern)
+    @JsonFormat(pattern = DateTimePattern.PATTERN)
     private LocalDateTime eventDate;
     private UserShortDto initiator;
     private Boolean paid;

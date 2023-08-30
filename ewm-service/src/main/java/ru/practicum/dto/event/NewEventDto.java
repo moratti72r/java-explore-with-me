@@ -31,7 +31,7 @@ public class NewEventDto {
 
     @NotNull
     @TwoHoursAhead
-    @JsonFormat(pattern = DateTimePattern.pattern)
+    @JsonFormat(pattern = DateTimePattern.PATTERN)
     private LocalDateTime eventDate;
 
     @Valid
@@ -43,6 +43,7 @@ public class NewEventDto {
     @PositiveOrZero
     private int participantLimit;
 
+    @NotNull
     private Boolean requestModeration = true;
 
     @NotBlank

@@ -80,10 +80,8 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public ParticipationRequestDto upDateStatusOnCanceled(long userId, long requestId) {
-        if (!requestRepository.existsByIdAndRequesterId(requestId, userId)) {
-            throw new NotFoundException("Request with id=" + requestId + " and requesterId=" + userId + " was not found");
-        }
-        ParticipationRequest request = requestRepository.findById(requestId).orElseThrow(() -> new NotFoundException("Requests with id=" + requestId + " was not found"));
+
+        ParticipationRequest request = requestRepository.findByIdAndRequesterId(requestId, userId).orElseThrow(() -> new NotFoundException("Requests with id=" + requestId + " from user with id=" + userId + " was not found"));
 
         request.setStatus(Status.CANCELED);
         requestRepository.save(request);
