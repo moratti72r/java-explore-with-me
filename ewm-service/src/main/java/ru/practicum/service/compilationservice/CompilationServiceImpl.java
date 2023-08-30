@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.compilation.CompilationDto;
 import ru.practicum.dto.compilation.NewCompilationDto;
+import ru.practicum.dto.compilation.UpdateCompilationDto;
 import ru.practicum.dto.event.EventShortDto;
 import ru.practicum.dto.mapper.CompilationMapper;
 import ru.practicum.dto.mapper.EventMapper;
@@ -66,7 +67,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    public CompilationDto upDateCompilation(long idCompilation, NewCompilationDto compilationDto) {
+    public CompilationDto upDateCompilation(long idCompilation, UpdateCompilationDto compilationDto) {
 
         Compilation compilation = compilationRepository.findById(idCompilation).orElseThrow(() -> new NotFoundException("Compilation with id=" + idCompilation + " was not found"));
         Set<Event> eventSet;
@@ -74,10 +75,10 @@ public class CompilationServiceImpl implements CompilationService {
             eventSet = getEventsFromIds(compilationDto.getEvents());
             compilation.setEvents(eventSet);
         }
-
-        compilation.setPinned(compilationDto.isPinned());
-
-        if (compilationDto.getTitle() != null) {
+        if (compilationDto.getPinned() != null) {
+            compilation.setPinned(compilationDto.getPinned());
+        }
+        if (compilationDto.getTitle() != null && !compilationDto.getTitle().isBlank()) {
             compilation.setTitle(compilationDto.getTitle());
         }
 
@@ -95,11 +96,24 @@ public class CompilationServiceImpl implements CompilationService {
         PageRequest pageRequest = PageRequest.of(from / size, size, Sort.by("id").ascending());
 
         List<Compilation> compilations = compilationRepository.findAllByPinned(pinned, pageRequest);
+
+        Set<Event> events = new HashSet<>();
+        for (Compilation comp : compilations) {
+            events.addAll(comp.getEvents());
+        }
+        Map<Long, Long> confirmedReq = statService.getConfirmedRequests(new ArrayList<>(events));
+        Map<Long, Long> views = statService.getViews(new ArrayList<>(events));
         Map<Long, CompilationDto> compilationDtoMap = compilations.stream()
                 .map(CompilationMapper::toCompilationDto).collect(Collectors.toMap(CompilationDto::getId, compilationDto -> compilationDto));
 
         for (Compilation compilation : compilations) {
-            compilationDtoMap.get(compilation.getId()).setEvents(getEventShortDtoSet(compilation.getEvents()));
+            Set<EventShortDto> eventShortSet = compilation.getEvents().stream().map(EventMapper::toEventShortDto).collect(Collectors.toSet());
+            eventShortSet.forEach(eventShortDto -> {
+                eventShortDto.setConfirmedRequests(confirmedReq.getOrDefault(eventShortDto.getId(), 0L));
+                eventShortDto.setViews(views.getOrDefault(eventShortDto.getId(), 0L));
+            });
+
+            compilationDtoMap.get(compilation.getId()).setEvents(eventShortSet);
         }
 
         log.info("Получен список подборок");
@@ -108,10 +122,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public CompilationDto getComplicationById(long idCompilation) {
-        if (!compilationRepository.existsById(idCompilation)) {
-            throw new NotFoundException("Compilation with id=" + idCompilation + " was not found");
-        }
-        Compilation compilation = compilationRepository.findById(idCompilation).get();
+        Compilation compilation = compilationRepository.findById(idCompilation).orElseThrow(() -> new NotFoundException("Compilation with id=" + idCompilation + " was not found"));
 
         CompilationDto result = CompilationMapper.toCompilationDto(compilation);
         result.setEvents(getEventShortDtoSet(compilation.getEvents()));

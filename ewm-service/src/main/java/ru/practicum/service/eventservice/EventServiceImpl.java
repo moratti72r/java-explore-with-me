@@ -48,10 +48,10 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventFullDto createEvent(long userId, NewEventDto eventDto) {
 
-        if (eventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2)) || eventDto.getEventDate().isBefore(LocalDateTime.now())) {
-            throw new NotMeetConditionException("Field: eventDate. Error: должно содержать дату, которая еще не наступила." +
-                    " Value: " + eventDto.getEventDate());
-        }
+//        if (eventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2)) || eventDto.getEventDate().isBefore(LocalDateTime.now())) {
+//            throw new NotMeetConditionException("Field: eventDate. Error: должно содержать дату, которая еще не наступила." +
+//                    " Value: " + eventDto.getEventDate());
+//        }
         Category category = categoryRepository.findById(eventDto.getCategory())
                 .orElseThrow(() -> new NotMeetConditionException("Должен содержать категорию которая существует. " +
                         "Value: " + eventDto.getCategory()));
@@ -125,64 +125,24 @@ public class EventServiceImpl implements EventService {
             throw new NotFoundException("User with id=" + userId + " was not found");
         }
         if (!eventRepository.existsById(eventId)) {
-            throw new NotFoundException("Event with id=" + userId + " was not found");
+            throw new NotFoundException("Event with id=" + eventId + " was not found");
         }
 
         Event event = eventRepository.findEventByIdAndInitiatorId(eventId, userId).orElseThrow(() -> new NotMeetLogicAppException("Событие с таким создателем отсутствует"));
 
-
         if (event.getState() == State.PUBLISHED) {
-            throw new NotMeetLogicAppException("Only pending or canceled events can be changed");
+            throw new NotMeetLogicAppException("Данное поле не требует изменения");
         }
 
-        if (updateEvent.getCategory() != null) {
-            Category category = categoryRepository.findById(updateEvent.getCategory()).orElseThrow(
-                    () -> new NotMeetConditionException("Field: category. Error: должно содержать категорию, которая существует." +
-                            " Value: " + updateEvent.getCategory()));
+        updateEvent(event, updateEvent);
 
-            event.setCategory(category);
-        }
-
-        if (updateEvent.getLocation() != null) {
-            Location location = locationRepository.findByLatAndLon(updateEvent.getLocation().getLat(),
-                            updateEvent.getLocation().getLat())
-                    .orElse(locationRepository.save(LocationMapper.toLocation(updateEvent.getLocation())));
-
-            event.setLocation(location);
-        }
-
-        if (updateEvent.getAnnotation() != null) {
-            event.setAnnotation(updateEvent.getAnnotation());
-        }
-        if (updateEvent.getDescription() != null) {
-            event.setDescription(updateEvent.getDescription());
-        }
-        if (updateEvent.getEventDate() != null) {
-            if (updateEvent.getEventDate().isBefore(LocalDateTime.now().plusHours(2)) || updateEvent.getEventDate().isBefore(LocalDateTime.now())) {
-                throw new MethodArgumentNotMeetLogicAppException("Field: eventDate. Error: должно содержать дату, которая еще не наступила." +
-                        " Value: " + updateEvent.getEventDate());
-            }
-            event.setEventDate(updateEvent.getEventDate());
-        }
-        if (updateEvent.getPaid() != null) {
-            event.setPaid(updateEvent.getPaid());
-        }
-        if (updateEvent.getParticipantLimit() != null) {
-            event.setParticipantLimit(updateEvent.getParticipantLimit());
-        }
-        if (updateEvent.getRequestModeration() != null) {
-            event.setRequestModeration(updateEvent.getRequestModeration());
-        }
         if (updateEvent.getStateAction() != null) {
-            if (updateEvent.getStateAction() == StateActionUser.SEND_TO_REVIEW) {
+            if (updateEvent.getStateAction() == UpdateEventUserRequest.StateAction.SEND_TO_REVIEW) {
                 event.setState(State.PENDING);
             }
-            if (updateEvent.getStateAction() == StateActionUser.CANCEL_REVIEW) {
+            if (updateEvent.getStateAction() == UpdateEventUserRequest.StateAction.CANCEL_REVIEW) {
                 event.setState(State.CANCELED);
             }
-        }
-        if (updateEvent.getTitle() != null) {
-            event.setTitle(updateEvent.getTitle());
         }
 
         eventRepository.save(event);
@@ -216,7 +176,7 @@ public class EventServiceImpl implements EventService {
                     " Value: " + userId);
         }
 
-        Event event = eventRepository.findById(eventId).get();
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
 
         if (!event.isRequestModeration() || event.getParticipantLimit() == 0) {
             throw new NotMeetConditionException("Error: Для данного события подтверждения не требуются");
@@ -298,63 +258,24 @@ public class EventServiceImpl implements EventService {
     public EventFullDto updateEventByAdmin(long eventId, UpdateEventAdminRequest updateEvent) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
 
-        if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
-            throw new NotMeetConditionException("Error: дата начала изменяемого события должна быть не ранее чем за час от даты публикации");
-        }
-
         if (event.getState() != State.PENDING) {
             throw new NotMeetLogicAppException("Данное поле не требует изменения");
         }
 
-        if (updateEvent.getCategory() != null) {
-            Category category = categoryRepository.findById(updateEvent.getCategory()).orElseThrow(
-                    () -> new NotMeetConditionException("Field: category. Error: должно содержать категорию, которая существует." +
-                            " Value: " + updateEvent.getCategory()));
-
-            event.setCategory(category);
+        if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
+            throw new NotMeetConditionException("Error: дата начала изменяемого события должна быть не ранее чем за час от даты публикации");
         }
 
-        if (updateEvent.getLocation() != null) {
-            Location location = locationRepository.findByLatAndLon(updateEvent.getLocation().getLat(),
-                            updateEvent.getLocation().getLat())
-                    .orElse(locationRepository.save(LocationMapper.toLocation(updateEvent.getLocation())));
+        updateEvent(event, updateEvent);
 
-            event.setLocation(location);
-        }
-
-        if (updateEvent.getAnnotation() != null) {
-            event.setAnnotation(updateEvent.getAnnotation());
-        }
-        if (updateEvent.getDescription() != null) {
-            event.setDescription(updateEvent.getDescription());
-        }
-        if (updateEvent.getEventDate() != null) {
-            if (updateEvent.getEventDate().isBefore(LocalDateTime.now().plusHours(2)) || updateEvent.getEventDate().isBefore(LocalDateTime.now())) {
-                throw new MethodArgumentNotMeetLogicAppException("Field: eventDate. Error: должно содержать дату, которая еще не наступила." +
-                        " Value: " + updateEvent.getEventDate());
-            }
-            event.setEventDate(updateEvent.getEventDate());
-        }
-        if (updateEvent.getPaid() != null) {
-            event.setPaid(updateEvent.getPaid());
-        }
-        if (updateEvent.getParticipantLimit() != null) {
-            event.setParticipantLimit(updateEvent.getParticipantLimit());
-        }
-        if (updateEvent.getRequestModeration() != null) {
-            event.setRequestModeration(updateEvent.getRequestModeration());
-        }
         if (updateEvent.getStateAction() != null) {
-            if (updateEvent.getStateAction() == StateActionAdmin.PUBLISH_EVENT) {
+            if (updateEvent.getStateAction() == UpdateEventAdminRequest.StateAction.PUBLISH_EVENT) {
                 event.setState(State.PUBLISHED);
                 event.setPublishedOn(LocalDateTime.now());
             }
-            if (updateEvent.getStateAction() == StateActionAdmin.REJECT_EVENT) {
+            if (updateEvent.getStateAction() == UpdateEventAdminRequest.StateAction.REJECT_EVENT) {
                 event.setState(State.CANCELED);
             }
-        }
-        if (updateEvent.getTitle() != null) {
-            event.setTitle(updateEvent.getTitle());
         }
 
         eventRepository.save(event);
@@ -428,5 +349,50 @@ public class EventServiceImpl implements EventService {
         result.setViews(statService.getViews(List.of(event)).getOrDefault(id, 0L));
 
         return result;
+    }
+
+    private void updateEvent(Event event, UpdateEventRequest updateEvent) {
+
+        if (updateEvent.getCategory() != null) {
+            Category category = categoryRepository.findById(updateEvent.getCategory()).orElseThrow(
+                    () -> new NotMeetConditionException("Field: category. Error: должно содержать категорию, которая существует." +
+                            " Value: " + updateEvent.getCategory()));
+
+            event.setCategory(category);
+        }
+
+        if (updateEvent.getLocation() != null) {
+            Location location = locationRepository.findByLatAndLon(updateEvent.getLocation().getLat(),
+                            updateEvent.getLocation().getLat())
+                    .orElse(locationRepository.save(LocationMapper.toLocation(updateEvent.getLocation())));
+
+            event.setLocation(location);
+        }
+
+        if (updateEvent.getAnnotation() != null && !updateEvent.getAnnotation().isBlank()) {
+            event.setAnnotation(updateEvent.getAnnotation());
+        }
+        if (updateEvent.getDescription() != null && !updateEvent.getDescription().isBlank()) {
+            event.setDescription(updateEvent.getDescription());
+        }
+        if (updateEvent.getEventDate() != null) {
+//            if (updateEvent.getEventDate().isBefore(LocalDateTime.now().plusHours(2)) || updateEvent.getEventDate().isBefore(LocalDateTime.now())) {
+//                throw new MethodArgumentNotMeetLogicAppException("Field: eventDate. Error: должно содержать дату, которая еще не наступила." +
+//                        " Value: " + updateEvent.getEventDate());
+//            }
+            event.setEventDate(updateEvent.getEventDate());
+        }
+        if (updateEvent.getPaid() != null) {
+            event.setPaid(updateEvent.getPaid());
+        }
+        if (updateEvent.getParticipantLimit() != null) {
+            event.setParticipantLimit(updateEvent.getParticipantLimit());
+        }
+        if (updateEvent.getRequestModeration() != null) {
+            event.setRequestModeration(updateEvent.getRequestModeration());
+        }
+        if (updateEvent.getTitle() != null && !updateEvent.getTitle().isBlank()) {
+            event.setTitle(updateEvent.getTitle());
+        }
     }
 }

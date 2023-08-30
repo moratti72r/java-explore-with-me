@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.ValidationMarker;
 import ru.practicum.dto.compilation.CompilationDto;
 import ru.practicum.dto.compilation.NewCompilationDto;
+import ru.practicum.dto.compilation.UpdateCompilationDto;
 import ru.practicum.service.compilationservice.CompilationService;
 
 import javax.validation.Valid;
@@ -23,7 +23,6 @@ public class AdminCompilationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Validated(ValidationMarker.Create.class)
     public CompilationDto createCompilation(@Valid @RequestBody NewCompilationDto compilationDto) {
         log.info("Получен POST запрос /admin/compilations");
         return compilationService.createCompilation(compilationDto);
@@ -37,10 +36,8 @@ public class AdminCompilationController {
     }
 
     @PatchMapping("/{compId}")
-    @ResponseStatus(HttpStatus.OK)
-    @Validated
     public CompilationDto updateCompilation(@PathVariable long compId,
-                                            @Valid @RequestBody NewCompilationDto compilationDto) {
+                                            @Valid @RequestBody UpdateCompilationDto compilationDto) {
         log.info("Получен PATCH запрос /admin/compilations/{}", compId);
         return compilationService.upDateCompilation(compId, compilationDto);
     }

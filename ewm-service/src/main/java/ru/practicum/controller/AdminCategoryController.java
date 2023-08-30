@@ -22,7 +22,6 @@ public class AdminCategoryController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    @Validated
     public CategoryDto create(@Valid @RequestBody NewCategoryDto categoryDto) {
         log.info("Получен POST запрос /admin/categories");
         return categoryService.create(categoryDto);
@@ -36,7 +35,6 @@ public class AdminCategoryController {
     }
 
     @PatchMapping("/{id}")
-    @Validated
     public CategoryDto patch(@PathVariable("id") long id, @Valid @RequestBody NewCategoryDto categoryDto) {
         log.info("Получен PATCH запрос /admin/categories/{}", id);
         return categoryService.upDate(id, categoryDto);

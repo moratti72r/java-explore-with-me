@@ -83,7 +83,7 @@ public class RequestServiceImpl implements RequestService {
         if (!requestRepository.existsByIdAndRequesterId(requestId, userId)) {
             throw new NotFoundException("Request with id=" + requestId + " and requesterId=" + userId + " was not found");
         }
-        ParticipationRequest request = requestRepository.findById(requestId).get();
+        ParticipationRequest request = requestRepository.findById(requestId).orElseThrow(() -> new NotFoundException("Requests with id=" + requestId + " was not found"));
 
         request.setStatus(Status.CANCELED);
         requestRepository.save(request);

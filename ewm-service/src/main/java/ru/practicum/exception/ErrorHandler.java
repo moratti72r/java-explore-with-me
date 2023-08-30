@@ -8,7 +8,9 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.constants.DateTimePattern;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,24 +20,14 @@ import java.util.Map;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DateTimePattern.pattern);
 
-    @ExceptionHandler
+    @ExceptionHandler({DataIntegrityViolationException.class, NotMeetLogicAppException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, String> handleViolation(DataIntegrityViolationException e) {
+    public Map<String, String> handleViolation(Exception e) {
         log.warn("Получен статус 409 Conflict {}", e.getMessage(), e);
         return Map.of("status", HttpStatus.CONFLICT.name(),
                 "reason", "Integrity constraint has been violated.",
-                "message", e.getMessage(),
-                "timestamp", LocalDateTime.now().format(FORMATTER));
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, String> handleNotRequireUpdate(NotMeetLogicAppException e) {
-        log.warn("Получен статус 409 Conflict {}", e.getMessage(), e);
-        return Map.of("status", HttpStatus.CONFLICT.name(),
-                "reason", "The field does not require updating.",
                 "message", e.getMessage(),
                 "timestamp", LocalDateTime.now().format(FORMATTER));
     }
@@ -60,39 +52,10 @@ public class ErrorHandler {
                 "timestamp", LocalDateTime.now().format(FORMATTER));
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({MissingServletRequestParameterException.class, MethodArgumentNotMeetLogicAppException.class,
+            MethodArgumentNotValidException.class, ValidationException.class, ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleMissingRequest(MissingServletRequestParameterException e) {
-        log.warn("Получен статус 400 Bad request {}", e.getMessage(), e);
-        return Map.of("status", HttpStatus.BAD_REQUEST.name(),
-                "reason", "Incorrectly made request",
-                "message", e.getMessage(),
-                "timestamp", LocalDateTime.now().format(FORMATTER));
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleNotValidArgument(MethodArgumentNotMeetLogicAppException e) {
-        log.warn("Получен статус 400 Bad request {}", e.getMessage(), e);
-        return Map.of("status", HttpStatus.BAD_REQUEST.name(),
-                "reason", "Incorrectly made request",
-                "message", e.getMessage(),
-                "timestamp", LocalDateTime.now().format(FORMATTER));
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleNotValidArgument(MethodArgumentNotValidException e) {
-        log.warn("Получен статус 400 Bad request {}", e.getMessage(), e);
-        return Map.of("status", HttpStatus.BAD_REQUEST.name(),
-                "reason", "Incorrectly made request",
-                "message", e.getMessage(),
-                "timestamp", LocalDateTime.now().format(FORMATTER));
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleValidation(ValidationException e) {
+    public Map<String, String> handleMissingRequest(Exception e) {
         log.warn("Получен статус 400 Bad request {}", e.getMessage(), e);
         return Map.of("status", HttpStatus.BAD_REQUEST.name(),
                 "reason", "Incorrectly made request",

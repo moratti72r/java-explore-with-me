@@ -24,7 +24,6 @@ public class AdminUserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Validated
     public UserDto create(@Valid @RequestBody UserDto userDto) {
         log.info("Получен POST запрос /admin/users");
         return userService.create(userDto);

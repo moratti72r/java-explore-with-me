@@ -2,50 +2,44 @@ package ru.practicum.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import ru.practicum.constants.DateTimePattern;
 import ru.practicum.dto.event.validator.TwoHoursAhead;
 
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewEventDto {
-
-    @NotBlank
+public class UpdateEventRequest {
     @Size(min = 20, max = 2000)
-    private String annotation;
+    protected String annotation;
 
-    @NotNull
-    private Long category;
+    protected Long category;
 
-    @NotBlank
     @Size(min = 20, max = 7000)
-    private String description;
+    protected String description;
 
-    @NotNull
     @TwoHoursAhead
     @JsonFormat(pattern = DateTimePattern.pattern)
-    private LocalDateTime eventDate;
+    protected LocalDateTime eventDate;
 
     @Valid
-    @NotNull
-    private LocationDto location;
+    protected LocationDto location;
 
-    private boolean paid;
+    protected Boolean paid;
 
     @PositiveOrZero
-    private int participantLimit;
+    protected Integer participantLimit;
 
-    private Boolean requestModeration = true;
+    protected Boolean requestModeration;
 
-    @NotBlank
     @Size(min = 3, max = 120)
-    private String title;
+    protected String title;
 }

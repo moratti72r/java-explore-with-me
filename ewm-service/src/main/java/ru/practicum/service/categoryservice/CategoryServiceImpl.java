@@ -14,7 +14,6 @@ import ru.practicum.model.Category;
 import ru.practicum.repository.CategoryRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,15 +41,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto upDate(long id, NewCategoryDto categoryDto) {
-        if (categoryRepository.existsById(id)) {
-            Category category = categoryRepository.findById(id).get();
-            category.setName(categoryDto.getName());
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Category with id=" + id + "was not found"));
+        category.setName(categoryDto.getName());
 
-            Category result = categoryRepository.save(category);
-            log.info("Категория с id={} успешно изменена", id);
+        Category result = categoryRepository.save(category);
+        log.info("Категория с id={} успешно изменена", id);
 
-            return CategoryMapper.toCategoryDto(result);
-        } else throw new NotFoundException("Category with id=" + id + "was not found");
+        return CategoryMapper.toCategoryDto(result);
     }
 
     @Override
@@ -66,10 +63,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getById(long id) {
-        Optional<Category> categoryOpt = categoryRepository.findById(id);
-        if (categoryOpt.isPresent()) {
-            log.info("Категория с id={} получена", id);
-            return CategoryMapper.toCategoryDto(categoryOpt.get());
-        } else throw new NotFoundException("Category with id=" + id + " was not found");
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Category with id=" + id + " was not found"));
+        log.info("Категория с id={} получена", id);
+        return CategoryMapper.toCategoryDto(category);
+
     }
 }

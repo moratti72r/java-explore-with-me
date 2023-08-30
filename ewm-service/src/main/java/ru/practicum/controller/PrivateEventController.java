@@ -29,7 +29,6 @@ public class PrivateEventController {
 
     @PostMapping("/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
-    @Validated
     public EventFullDto createEvent(@PathVariable long userId,
                                     @Valid @RequestBody NewEventDto eventDto) {
         log.info("Получен POST запрос /users/{}/events", userId);
@@ -37,7 +36,6 @@ public class PrivateEventController {
     }
 
     @GetMapping("/{userId}/events")
-    @ResponseStatus(HttpStatus.OK)
     public List<EventFullDto> getAllEvents(@PathVariable long userId,
                                            @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                            @RequestParam(defaultValue = "10") @Positive int size) {
@@ -46,7 +44,6 @@ public class PrivateEventController {
     }
 
     @GetMapping("/{userId}/events/{eventId}")
-    @ResponseStatus(HttpStatus.OK)
     public EventFullDto getEventById(@PathVariable long userId,
                                      @PathVariable long eventId) {
         log.info("Получен POST запрос /users/{}/events/{}", userId, eventId);
@@ -54,8 +51,6 @@ public class PrivateEventController {
     }
 
     @PatchMapping("/{userId}/events/{eventId}")
-    @ResponseStatus(HttpStatus.OK)
-    @Validated
     public EventFullDto updateEvent(@PathVariable long userId,
                                     @PathVariable long eventId,
                                     @Valid @RequestBody UpdateEventUserRequest updateEvent) {
@@ -64,7 +59,6 @@ public class PrivateEventController {
     }
 
     @GetMapping("/{userId}/events/{eventId}/requests")
-    @ResponseStatus(HttpStatus.OK)
     public List<ParticipationRequestDto> getRequests(@PathVariable long userId,
                                                      @PathVariable long eventId) {
         log.info("Получен GET запрос /users/{}/events/{}/requests", userId, eventId);
@@ -72,7 +66,6 @@ public class PrivateEventController {
     }
 
     @PatchMapping("/{userId}/events/{eventId}/requests")
-    @ResponseStatus(HttpStatus.OK)
     public EventRequestStatusUpdateResult updateStatusRequest(@PathVariable long userId,
                                                               @PathVariable long eventId,
                                                               @RequestBody EventRequestStatusUpdateRequest updateRequest) {

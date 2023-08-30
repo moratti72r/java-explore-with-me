@@ -57,5 +57,6 @@ CREATE TABLE IF NOT EXISTS compilations
 CREATE TABLE IF NOT EXISTS compilations_events
 (
     compilations_id BIGINT REFERENCES compilations (id),
-    events_id       BIGINT REFERENCES events (id)
+    events_id       BIGINT REFERENCES events (id),
+    CONSTRAINT pk_compilations_events PRIMARY KEY (compilations_id, events_id)
 );

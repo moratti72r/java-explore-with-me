@@ -3,7 +3,6 @@ package ru.practicum.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.request.ParticipationRequestDto;
 import ru.practicum.service.requestservice.RequestService;
@@ -12,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Validated
 @Slf4j
 @RequestMapping(path = "/users")
 public class PrivateParticipationRequestController {
@@ -27,14 +25,12 @@ public class PrivateParticipationRequestController {
     }
 
     @GetMapping("/{userId}/requests")
-    @ResponseStatus(HttpStatus.OK)
     public List<ParticipationRequestDto> getRequests(@PathVariable long userId) {
         log.info("Получен GET запрос /users/{}/requests", userId);
         return requestService.getRequestByIdUser(userId);
     }
 
     @PatchMapping("/{userId}/requests/{requestId}/cancel")
-    @ResponseStatus(HttpStatus.OK)
     public ParticipationRequestDto changeStatusOnCancel(@PathVariable long userId,
                                                         @PathVariable long requestId) {
         log.info("Получен PATCH запрос /users/{}/requests/{}/cancel", userId, requestId);
