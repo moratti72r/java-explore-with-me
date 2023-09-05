@@ -52,7 +52,7 @@ public class EventMapper {
                 .build();
     }
 
-    public EventShortForComment toEventShortForComment (Event event) {
+    public EventShortForComment toEventShortForComment(Event event) {
         return EventShortForComment.builder()
                 .id(event.getId())
                 .annotation(event.getAnnotation())

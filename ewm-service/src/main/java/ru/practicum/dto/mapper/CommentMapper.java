@@ -6,7 +6,7 @@ import ru.practicum.model.Comment;
 
 @UtilityClass
 public class CommentMapper {
-    public CommentFullDto toCommentFullDto (Comment comment) {
+    public CommentFullDto toCommentFullDto(Comment comment) {
         return CommentFullDto.builder()
                 .id(comment.getId())
                 .text(comment.getText())
