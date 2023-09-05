@@ -4,7 +4,6 @@ import org.springframework.http.*;
 import org.springframework.lang.Nullable;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
-import ru.practicum.statsdto.ViewStatsDto;
 
 import java.util.List;
 import java.util.Map;
@@ -16,8 +15,8 @@ public class BaseClient {
         this.rest = rest;
     }
 
-    protected List<ViewStatsDto> get(String path, @Nullable Map<String, Object> parameters) {
-        return (List<ViewStatsDto>) makeAndSendRequest(HttpMethod.GET, path, parameters, null);
+    protected ResponseEntity<Object> get(String path, @Nullable Map<String, Object> parameters) {
+        return makeAndSendRequest(HttpMethod.GET, path, parameters, null);
     }
 
     protected <T> void post(String path, T body) {

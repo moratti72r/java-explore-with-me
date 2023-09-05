@@ -3,13 +3,10 @@ package ru.practicum.statsserver.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.statsdto.EndpointHitDto;
 import ru.practicum.statsdto.ViewStatsDto;
 import ru.practicum.statsserver.service.StatsService;
@@ -26,11 +23,9 @@ public class StatsServerController {
     private final StatsService statsService;
 
     @PostMapping("/hit")
-    @Validated
-    public ResponseEntity<String> createHit(@Valid @RequestBody EndpointHitDto endpointHitDto) {
+    public ResponseEntity<EndpointHitDto> createHit(@Valid @RequestBody EndpointHitDto endpointHitDto) {
         log.info("Получен POST запрос /hit");
-        statsService.addHit(endpointHitDto);
-        return ResponseEntity.ok("Информация сохранена");
+        return new ResponseEntity<>(statsService.addHit(endpointHitDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/stats")
