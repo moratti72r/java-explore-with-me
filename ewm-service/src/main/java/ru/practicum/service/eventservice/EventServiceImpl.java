@@ -1,6 +1,8 @@
 package ru.practicum.service.eventservice;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -30,20 +32,21 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class EventServiceImpl implements EventService {
 
-    private final EventRepository eventRepository;
+    EventRepository eventRepository;
 
-    private final CategoryRepository categoryRepository;
+    CategoryRepository categoryRepository;
 
-    private final UserRepository userRepository;
+    UserRepository userRepository;
 
-    private final LocationRepository locationRepository;
+    LocationRepository locationRepository;
 
-    private final RequestRepository requestRepository;
+    RequestRepository requestRepository;
 
-    private final StatService statService;
+    StatService statService;
 
     @Override
     public EventFullDto createEvent(long userId, NewEventDto eventDto) {

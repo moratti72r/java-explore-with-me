@@ -8,30 +8,35 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "requests", uniqueConstraints = {@UniqueConstraint(columnNames = {"event_id", "requester_id"})})
-public class ParticipationRequest {
-
+@Table(name = "comments")
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "created")
-    LocalDateTime created;
+    @Column(name = "text", length = 1000)
+    String text;
 
     @ManyToOne
     @JoinColumn(name = "event_id")
     Event event;
 
     @ManyToOne
-    @JoinColumn(name = "requester_id")
-    User requester;
+    @JoinColumn(name = "commentator_id")
+    User commentator;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    Status status;
+    @Column(name = "created_on")
+    LocalDateTime createdOn;
+
+    @Column(name = "patched_on")
+    LocalDateTime patchedOn;
+
+    @Column(name = "likes")
+    long likes;
 }
