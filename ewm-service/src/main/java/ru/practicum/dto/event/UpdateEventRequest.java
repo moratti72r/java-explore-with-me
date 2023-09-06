@@ -1,9 +1,11 @@
 package ru.practicum.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.constants.DateTimePattern;
 import ru.practicum.dto.event.validator.TwoHoursAhead;
@@ -17,29 +19,30 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PROTECTED)
 public class UpdateEventRequest {
     @Size(min = 20, max = 2000)
-    protected String annotation;
+    String annotation;
 
-    protected Long category;
+    Long category;
 
     @Size(min = 20, max = 7000)
-    protected String description;
+    String description;
 
     @TwoHoursAhead
     @JsonFormat(pattern = DateTimePattern.PATTERN)
-    protected LocalDateTime eventDate;
+    LocalDateTime eventDate;
 
     @Valid
-    protected LocationDto location;
+    LocationDto location;
 
-    protected Boolean paid;
+    Boolean paid;
 
     @PositiveOrZero
-    protected Integer participantLimit;
+    Integer participantLimit;
 
-    protected Boolean requestModeration;
+    Boolean requestModeration;
 
     @Size(min = 3, max = 120)
-    protected String title;
+    String title;
 }

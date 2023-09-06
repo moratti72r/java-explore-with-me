@@ -1,9 +1,7 @@
 package ru.practicum.dto.event;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -12,13 +10,14 @@ import javax.validation.constraints.Min;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class LocationDto {
 
     @Max(90)
     @Min(-90)
-    private double lat;
+    double lat;
 
     @Max(180)
     @Min(-180)
-    private double lon;
+    double lon;
 }

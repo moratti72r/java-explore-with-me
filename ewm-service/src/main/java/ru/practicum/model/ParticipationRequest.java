@@ -1,6 +1,7 @@
 package ru.practicum.model;
 
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,26 +11,27 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "requests", uniqueConstraints = {@UniqueConstraint(columnNames = {"event_id", "requester_id"})})
 public class ParticipationRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
     @Column(name = "created")
-    private LocalDateTime created;
+    LocalDateTime created;
 
     @ManyToOne
     @JoinColumn(name = "event_id")
-    private Event event;
+    Event event;
 
     @ManyToOne
     @JoinColumn(name = "requester_id")
-    private User requester;
+    User requester;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private Status status;
+    Status status;
 }

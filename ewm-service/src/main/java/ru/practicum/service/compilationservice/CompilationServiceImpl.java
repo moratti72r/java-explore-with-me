@@ -1,6 +1,8 @@
 package ru.practicum.service.compilationservice;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,14 +26,15 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class CompilationServiceImpl implements CompilationService {
 
-    private final CompilationRepository compilationRepository;
+    CompilationRepository compilationRepository;
 
-    private final EventRepository eventRepository;
+    EventRepository eventRepository;
 
-    private final StatService statService;
+    StatService statService;
 
     @Override
     public CompilationDto createCompilation(NewCompilationDto compilationDto) {

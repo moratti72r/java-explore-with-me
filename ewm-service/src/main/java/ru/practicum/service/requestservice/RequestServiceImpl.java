@@ -1,6 +1,8 @@
 package ru.practicum.service.requestservice;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.request.ParticipationRequestDto;
@@ -18,14 +20,15 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class RequestServiceImpl implements RequestService {
 
-    private final RequestRepository requestRepository;
+    RequestRepository requestRepository;
 
-    private final UserRepository userRepository;
+    UserRepository userRepository;
 
-    private final EventRepository eventRepository;
+    EventRepository eventRepository;
 
     @Override
     public ParticipationRequestDto createRequest(long userId, long eventId) {

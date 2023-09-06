@@ -1,9 +1,7 @@
 package ru.practicum.dto.comment;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.dto.event.EventShortForComment;
 import ru.practicum.dto.user.UserShortDto;
 
@@ -13,12 +11,13 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CommentFullDto {
-    private Long id;
-    private String text;
-    private EventShortForComment event;
-    private UserShortDto commentator;
-    private LocalDateTime createdOn;
-    private LocalDateTime patchedOn;
-    private Long likes;
+    Long id;
+    String text;
+    EventShortForComment event;
+    UserShortDto commentator;
+    LocalDateTime createdOn;
+    LocalDateTime patchedOn;
+    Long likes;
 }

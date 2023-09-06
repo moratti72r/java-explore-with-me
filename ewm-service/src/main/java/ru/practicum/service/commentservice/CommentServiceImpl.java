@@ -1,6 +1,8 @@
 package ru.practicum.service.commentservice;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.comment.CommentFullDto;
@@ -22,14 +24,15 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class CommentServiceImpl implements CommentService {
 
-    private final CommentRepository commentRepository;
+    CommentRepository commentRepository;
 
-    private final UserRepository userRepository;
+    UserRepository userRepository;
 
-    private final EventRepository eventRepository;
+    EventRepository eventRepository;
 
     @Override
     public CommentFullDto createComment(long userId, long eventId, CommentShortDto commentDto) {

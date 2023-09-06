@@ -3,7 +3,6 @@ package ru.practicum.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.comment.CommentFullDto;
 import ru.practicum.dto.comment.CommentShortDto;
@@ -13,15 +12,15 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping(path = "/users")
-@Validated
 public class PrivateCommentController {
 
+    private static final String COMMENT_URL = "/{userId}/comments";
     private final CommentService commentService;
 
-    @PostMapping("/{userId}/comments/events/{eventId}")
+    @PostMapping(COMMENT_URL + "/events/{eventId}")
     @ResponseStatus(HttpStatus.CREATED)
     public CommentFullDto createComment(@PathVariable long userId,
                                         @PathVariable long eventId,
@@ -30,7 +29,7 @@ public class PrivateCommentController {
         return commentService.createComment(userId, eventId, commentDto);
     }
 
-    @DeleteMapping("/{userId}/comments/{commentId}")
+    @DeleteMapping(COMMENT_URL + "/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteComment(@PathVariable long userId,
                               @PathVariable long commentId) {
@@ -38,7 +37,7 @@ public class PrivateCommentController {
         commentService.deleteCommentForCommentator(userId, commentId);
     }
 
-    @PatchMapping("/{userId}/comments/{commentId}")
+    @PatchMapping(COMMENT_URL + "/{commentId}")
     public CommentFullDto updateComment(@PathVariable long userId,
                                         @PathVariable long commentId,
                                         @RequestBody @Valid CommentShortDto commentDto) {
@@ -46,14 +45,14 @@ public class PrivateCommentController {
         return commentService.updateCommentForCommentator(userId, commentId, commentDto);
     }
 
-    @PatchMapping("/{userId}/comments/{commentId}/likes")
+    @PatchMapping(COMMENT_URL + "/{commentId}/likes")
     public CommentFullDto addLikeOnComment(@PathVariable long userId,
                                            @PathVariable long commentId) {
         log.info("Получен PATCH запрос /users/{}/comments/{}/likes", userId, commentId);
         return commentService.addLikeOnComment(userId, commentId);
     }
 
-    @GetMapping("/{userId}/comments")
+    @GetMapping(COMMENT_URL)
     public List<CommentFullDto> getCommentsByCommentator(@PathVariable long userId) {
         log.info("Получен GET запрос /users/{}/comments", userId);
         return commentService.getAllByCommentator(userId);
