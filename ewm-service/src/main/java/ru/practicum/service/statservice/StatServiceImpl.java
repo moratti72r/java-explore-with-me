@@ -2,9 +2,7 @@ package ru.practicum.service.statservice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +22,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class StatServiceImpl implements StatService {
-    RequestRepository requestRepository;
+    private final RequestRepository requestRepository;
 
-    ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    StatClient statClient;
+    private final StatClient statClient;
 
     @Value("${main_app}")
     private String app;
